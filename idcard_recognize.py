@@ -15,5 +15,6 @@ def process(img_name):
         print(e)
     return result_dict
 
+
 if __name__ == '__main__':
     print(idcard_recognize.process('testimages/3.jpg'))

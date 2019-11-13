@@ -411,10 +411,6 @@ def get_result_fix_length(red, fix_length, langset, custom_config=''):
     # print(len(contours))
     # 描边一次可以减少噪点
     cv2.drawContours(red, contours, -1, (0, 255, 0), 1)
-    color_img = cv2.cvtColor(red, cv2.COLOR_GRAY2BGR)
-    # for x, y, w, h in contours:
-    #     imgrect = cv2.rectangle(color_img, (x, y), (x + w, y + h), (0, 255, 0), 2)
-    # showimg(imgrect)
 
     h_threshold = 54
     numset_contours = []
@@ -522,9 +518,7 @@ def hist_equal(img):
     # clahe = cv2.createCLAHE(clipLimit=1.0, tileGridSize=(clahe_size, clahe_size))
     # result = clahe.apply(img)
     # test
-
     # result = cv2.equalizeHist(img)
-
     image = img.get()  # UMat to Mat
     # result = cv2.equalizeHist(image)
     lut = np.zeros(256, dtype=image.dtype)  # 创建空的查找表

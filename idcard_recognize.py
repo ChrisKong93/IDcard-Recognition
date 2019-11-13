@@ -20,7 +20,7 @@ def process(img_name):
     return result_dict
 
 #SocketServer.ForkingMixIn, SocketServer.ThreadingMixIn
-class ForkingServer(socketserver.ForkingMixIn, HTTPServer):
+class ForkingServer(socketserver.ThreadingMixIn, HTTPServer):
     pass
 
 class S(BaseHTTPRequestHandler):

@@ -13,6 +13,7 @@
 > ```bash
 > python3 test.py
 
-windows下配置环境变量
+### windows下配置环境变量
+~~~bash
 path = D:\Tesseract-OCR
 TESSDATA_PREFIX = D:\Tesseract-OCR\tessdata

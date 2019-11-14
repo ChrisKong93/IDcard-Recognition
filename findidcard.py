@@ -6,7 +6,6 @@ import cv2, time
 class findidcard:
     def __init__(self):
         pass
-
     # img1为身份证模板, img2为需要识别的图像
     def find(self, img2_name):
         print(u'进入身份证模版匹配流程...')

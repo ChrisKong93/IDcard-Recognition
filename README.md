@@ -10,7 +10,5 @@
 > `sudo cp tessdata/* /usr/share/tesseract-ocr/tessdata`<br>
 # 使用方法：
 > 识别本地图片<br>
-> ```python
-> import idcard_recognize
-> 
-> print(idcard_recognize.process('testimages/3.jpg'))
+> ```bash
+> python3 test.py

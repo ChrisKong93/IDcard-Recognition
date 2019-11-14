@@ -12,3 +12,7 @@
 > 识别本地图片<br>
 > ```bash
 > python3 test.py
+
+windows下配置环境变量
+path = D:\Tesseract-OCR
+TESSDATA_PREFIX = D:\Tesseract-OCR\tessdata

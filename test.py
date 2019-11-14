@@ -17,7 +17,7 @@ def process(img_name):
 
 
 if __name__ == '__main__':
-    idcardimagepath = 'testimages/11.jpg'
+    idcardimagepath = 'testimages/1.jpg'
     info = process(idcardimagepath)
     error = info['error']
     if error == 0:
@@ -27,6 +27,7 @@ if __name__ == '__main__':
         birth = info['birth']
         address = info['address']
         idnum = info['idnum']
+        print('*' * 30)
         print('name:   ' + name)
         print('nation: ' + nation)
         print('sex:    ' + sex)

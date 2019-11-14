@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-from PIL import Image
-import pytesseract
-import cv2
-import numpy as np
 import re
 
-# windows下需要修改pytesseract中的地址
+from PIL import Image
+import cv2
+import numpy as np
+import pytesseract
+
+# windows下需要修改pytesseract中的地址（不一定）
 # pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files (x86)\\Tesseract-OCR\\tesseract.exe'
 x = 1280.00 / 3840.00
 pixel_x = int(x * 3840)
@@ -13,7 +14,7 @@ pixel_x = int(x * 3840)
 
 # print(x, pixel_x)
 
-# mode0:识别姓名，出生日期，身份证号； mode1：识别所有信息
+# mode1：识别所有信息
 def idcardocr(imgname, mode=1):
     print(u'进入身份证识别流程...')
     if mode == 1:
@@ -49,28 +50,8 @@ def idcardocr(imgname, mode=1):
         # print 'idnum'
         result_dict['idnum'], result_dict['birth'] = get_idnum_and_birth(idnum_pic)
         # print result_dict['idnum']
-    elif mode == 0:
-        # generate_mask(x)
-        img_data_gray, img_org = img_resize_gray(imgname)
-        result_dict = dict()
-        name_pic = find_name(img_data_gray, img_org)
-        # showimg(name_pic)
-        # print 'name'
-        result_dict['name'] = get_name(name_pic)
-        # print result_dict['name']
-
-        idnum_pic = find_idnum(img_data_gray, img_org)
-        # showimg(idnum_pic)
-        # print 'idnum'
-
-        result_dict['idnum'], result_dict['birth'] = get_idnum_and_birth(idnum_pic)
-        result_dict['sex'] = ''
-        result_dict['nation'] = ''
-        result_dict['address'] = ''
-
     else:
         print(u"模式选择错误！")
-
     # showimg(img_data_gray)
     return result_dict
 

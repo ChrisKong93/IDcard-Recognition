@@ -4,18 +4,18 @@ import pytesseract
 import cv2
 import numpy as np
 import re
-from multiprocessing import Pool, Queue, Lock, Process, freeze_support
-import time
 
+# windows下需要修改pytesseract中的地址
 # pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files (x86)\\Tesseract-OCR\\tesseract.exe'
 x = 1280.00 / 3840.00
 pixel_x = int(x * 3840)
-print(x, pixel_x)
 
+
+# print(x, pixel_x)
 
 # mode0:识别姓名，出生日期，身份证号； mode1：识别所有信息
 def idcardocr(imgname, mode=1):
-    print(u'进入身份证光学识别流程...')
+    print(u'进入身份证识别流程...')
     if mode == 1:
         # generate_mask(x)
         img_data_gray, img_org = img_resize_gray(imgname)
@@ -73,47 +73,6 @@ def idcardocr(imgname, mode=1):
 
     # showimg(img_data_gray)
     return result_dict
-
-
-def generate_mask(x):
-    name_mask_pic = cv2.UMat(cv2.imread('./mask/name_mask.jpg'))
-    sex_mask_pic = cv2.UMat(cv2.imread('./mask/sex_mask.jpg'))
-    nation_mask_pic = cv2.UMat(cv2.imread('./mask/nation_mask.jpg'))
-    birth_mask_pic = cv2.UMat(cv2.imread('./mask/birth_mask.jpg'))
-    year_mask_pic = cv2.UMat(cv2.imread('./mask/year_mask.jpg'))
-    month_mask_pic = cv2.UMat(cv2.imread('./mask/month_mask.jpg'))
-    day_mask_pic = cv2.UMat(cv2.imread('./mask/day_mask.jpg'))
-    address_mask_pic = cv2.UMat(cv2.imread('./mask/address_mask.jpg'))
-    idnum_mask_pic = cv2.UMat(cv2.imread('./mask/idnum_mask.jpg'))
-    name_mask_pic = img_resize_x(name_mask_pic)
-    sex_mask_pic = img_resize_x(sex_mask_pic)
-    nation_mask_pic = img_resize_x(nation_mask_pic)
-    birth_mask_pic = img_resize_x(birth_mask_pic)
-    year_mask_pic = img_resize_x(year_mask_pic)
-    month_mask_pic = img_resize_x(month_mask_pic)
-    day_mask_pic = img_resize_x(day_mask_pic)
-    address_mask_pic = img_resize_x(address_mask_pic)
-    idnum_mask_pic = img_resize_x(idnum_mask_pic)
-    cv2.imwrite('./mask/name_mask_%s.jpg' % pixel_x, name_mask_pic)
-    cv2.imwrite('./mask/sex_mask_%s.jpg' % pixel_x, sex_mask_pic)
-    cv2.imwrite('./mask/nation_mask_%s.jpg' % pixel_x, nation_mask_pic)
-    cv2.imwrite('./mask/birth_mask_%s.jpg' % pixel_x, birth_mask_pic)
-    cv2.imwrite('./mask/year_mask_%s.jpg' % pixel_x, year_mask_pic)
-    cv2.imwrite('./mask/month_mask_%s.jpg' % pixel_x, month_mask_pic)
-    cv2.imwrite('./mask/day_mask_%s.jpg' % pixel_x, day_mask_pic)
-    cv2.imwrite('./mask/address_mask_%s.jpg' % pixel_x, address_mask_pic)
-    cv2.imwrite('./mask/idnum_mask_%s.jpg' % pixel_x, idnum_mask_pic)
-
-
-# 用于生成模板
-def img_resize_x(imggray):
-    # print 'dheight:%s' % dheight
-    crop = imggray
-    size = crop.get().shape
-    dheight = int(size[0] * x)
-    dwidth = int(size[1] * x)
-    crop = cv2.resize(src=crop, dsize=(dwidth, dheight), interpolation=cv2.INTER_CUBIC)
-    return crop
 
 
 # idcardocr里面resize以高度为依据, 用于get部分
@@ -184,53 +143,6 @@ def find_nation(crop_gray, crop_org):
     # showimg(crop_gray)
     return cv2.UMat(result)
 
-
-# def find_birth(crop_gray, crop_org):
-#         template = cv2.UMat(cv2.imread('birth_mask_%s.jpg'%pixel_x, 0))
-#         # showimg(template)
-#         w, h = cv2.UMat.get(template).shape[::-1]
-#         res = cv2.matchTemplate(crop_gray, template, cv2.TM_CCOEFF_NORMED)
-#         #showimg(crop_gray)
-#         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-#         top_left = (max_loc[0] + w, max_loc[1] - int(20*x))
-#         bottom_right = (top_left[0] + int(1500*x), top_left[1] + int(300*x))
-#         # 提取result需要在rectangle之前
-#         date_org = cv2.UMat.get(crop_org)[top_left[1]:bottom_right[1], top_left[0]:bottom_right[0]]
-#         date = cv2.cvtColor(date_org, cv2.COLOR_BGR2GRAY)
-#         cv2.rectangle(crop_gray, top_left, bottom_right, 255, 2)
-#         # cv2.imwrite('date.png',date)
-#
-#         # 提取年份
-#         template = cv2.UMat(cv2.imread('year_mask_%s.jpg'%pixel_x, 0))
-#         year_res = cv2.matchTemplate(date, template, cv2.TM_CCOEFF_NORMED)
-#         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(year_res)
-#         bottom_right = (max_loc[0]+int(20*x), int(300*x))
-#         top_left = (0, 0)
-#         year = date_org[top_left[1]:bottom_right[1], top_left[0]:bottom_right[0]]
-#         # cv2.imwrite('year.png',year)
-#         cv2.rectangle(crop_gray, top_left, bottom_right, 255, 2)
-#
-#         # 提取月
-#         template = cv2.UMat(cv2.imread('month_mask_%s.jpg'%pixel_x, 0))
-#         month_res = cv2.matchTemplate(date, template, cv2.TM_CCOEFF_NORMED)
-#         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(month_res)
-#         bottom_right = (max_loc[0]+int(40*x), int(300*x))
-#         top_left = (max_loc[0] - int(220*x), 0)
-#         month = date_org[top_left[1]:bottom_right[1], top_left[0]:bottom_right[0]]
-#         # cv2.imwrite('month.png',month)
-#         cv2.rectangle(crop_gray, top_left, bottom_right, 255, 2)
-#
-#         # 提取日
-#         template = cv2.UMat(cv2.imread('day_mask_%s.jpg'%pixel_x, 0))
-#         day_res = cv2.matchTemplate(date, template, cv2.TM_CCOEFF_NORMED)
-#         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(day_res)
-#         bottom_right = (max_loc[0]+int(20*x), int(300*x))
-#         top_left = (max_loc[0] - int(220*x), 0)
-#         day = date_org[top_left[1]:bottom_right[1], top_left[0]:bottom_right[0]]
-#         # cv2.imwrite('day.png',day)
-#         cv2.rectangle(crop_gray, top_left, bottom_right, 255, 2)
-#         showimg(crop_gray)
-#         return cv2.UMat(year), cv2.UMat(month), cv2.UMat(day)
 
 def find_address(crop_gray, crop_org):
     template = cv2.UMat(cv2.imread('./mask/address_mask_%s.jpg' % pixel_x, 0))
@@ -335,40 +247,9 @@ def get_nation(img):
     red = img_resize(red, 150)
     # cv2.imwrite('nation.png', red)
     # img = Image.fromarray(cv2.UMat.get(red).astype('uint8'))
-    return get_result_fix_length(red, 1, 'nation', '--psm 10')
+    return get_result_fix_length(red, 1, 'nation', '--psm 7')
     # return get_result_fix_length(red, 1, 'chi_sim', '--psm 10')
     # return pytesseract.image_to_string(img, lang='nation', config='-psm 13').replace(" ","")
-
-
-# def get_birth(year, month, day):
-#         _, _, red = cv2.split(year)
-#         red = cv2.UMat(red)
-#         red = hist_equal(red)
-#         red = cv2.adaptiveThreshold(red, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 151, 50)
-#         red = img_resize(red, 150)
-#         # cv2.imwrite('year_red.png', red)
-#         year_red = red
-#
-#         _, _, red = cv2.split(month)
-#         red = cv2.UMat(red)
-#         red = hist_equal(red)
-#         red = cv2.adaptiveThreshold(red, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 151, 50)
-#         #red = cv2.erode(red,kernel,iterations = 1)
-#         red = img_resize(red, 150)
-#         # cv2.imwrite('month_red.png', red)
-#         month_red = red
-#
-#         _, _, red = cv2.split(day)
-#         red = cv2.UMat(red)
-#         red = hist_equal(red)
-#         red = cv2.adaptiveThreshold(red, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 151, 50)
-#         red = img_resize(red, 150)
-#         # cv2.imwrite('day_red.png', red)
-#         day_red = red
-#         # return pytesseract.image_to_string(img, lang='birth', config='-psm 7')
-#         return get_result_fix_length(year_red, 4, 'eng', '-c tessedit_char_whitelist=0123456789 -psm 13'), \
-#                get_result_vary_length(month_red, 'eng', '-c tessedit_char_whitelist=0123456789 -psm 13'), \
-#                get_result_vary_length(day_red, 'eng', '-c tessedit_char_whitelist=0123456789 -psm 13')
 
 
 def get_address(img):
@@ -554,11 +435,3 @@ def hist_equal(img):
     # print type(result)
     # showimg(result)
     return cv2.UMat(result)
-
-
-if __name__ == "__main__":
-    idocr = idcardocr(cv2.UMat(cv2.imread('testimages/zrh.jpg')))
-    print(idocr)
-    # for i in range(15):
-    #     idocr = idcardocr(cv2.UMat(cv2.imread('testimages/%s.jpg'%(i+1))))
-    #     print(idocr['idnum'])

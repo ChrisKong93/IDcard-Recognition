@@ -8,7 +8,7 @@ def process(img_name):
     try:
         idfind = findidcard.findidcard()
         idcard_img = idfind.find(img_name)
-        result_dict = idcardocr.idcardocr(idcard_img)
+        result_dict = idcardocr.idcardocr(idcard_img, 1)
         result_dict['error'] = 0
     except Exception as e:
         result_dict = {'error': 1}
@@ -17,4 +17,21 @@ def process(img_name):
 
 
 if __name__ == '__main__':
-    print(idcard_recognize.process('testimages/3.jpg'))
+    idcardimagepath = 'testimages/11.jpg'
+    info = idcard_recognize.process(idcardimagepath)
+    error = info['error']
+    if error == 0:
+        name = info['name']
+        nation = info['nation']
+        sex = info['sex']
+        birth = info['birth']
+        address = info['address']
+        idnum = info['idnum']
+        print('name:   ' + name)
+        print('nation: ' + nation)
+        print('sex:    ' + sex)
+        print('birth:  ' + birth)
+        print('address:' + address)
+        print('idnum:  ' + idnum)
+    else:
+        print(info)

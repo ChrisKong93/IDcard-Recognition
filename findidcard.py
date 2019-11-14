@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import cv2, time
-import idcardocr
-from matplotlib import pyplot as plt
 
 
 class findidcard:
@@ -51,7 +49,6 @@ class findidcard:
             dst_pts = np.float32([kp2[m.trainIdx].pt for m in good]).reshape(-1, 1, 2)
             # 用HomoGraphy计算图像与图像之间映射关系, M为转换矩阵
             M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
-            matchesMask = mask.ravel().tolist()
             # 使用转换矩阵M计算出img1在img2的对应形状
             h, w = cv2.UMat.get(img1).shape
             M_r = np.linalg.inv(M)
@@ -59,14 +56,6 @@ class findidcard:
             # self.showimg(im_r)
         else:
             print("Not enough matches are found - %d/%d" % (len(good), MIN_MATCH_COUNT))
-            matchesMask = None
-
-        # draw_params = dict(matchColor = (0,255,0), # draw matches in green color
-        #           singlePointColor = None,
-        #           matchesMask = matchesMask, # draw only inliers
-        #           flags = 2)
-        # img3 = cv2.drawMatches(img1,kp1,img2,kp2,good,None,**draw_params)
-        # plt.imshow(img3, 'gray'),plt.show()
         t2 = round(time.time() * 1000)
         print(u'查找身份证耗时:%s' % (t2 - t1))
         return im_r
@@ -86,9 +75,3 @@ class findidcard:
         height = height * dwidth / width
         crop = cv2.resize(src=crop, dsize=(dwidth, int(height)), interpolation=cv2.INTER_CUBIC)
         return crop
-
-
-if __name__ == "__main__":
-    idfind = findidcard()
-    result = idfind.find('idcard_mask.jpg', 'testimages/9.jpg')
-    # idfind.showimg(result)
